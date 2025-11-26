@@ -38,10 +38,50 @@ class App {
         // Connect to MQTT
         this.connectMQTT();
 
+        // Register Service Worker Features
+        this.registerSWFeatures();
+
         // Reset button
         document.getElementById('reset-btn').addEventListener('click', () => {
             window.location.reload();
         });
+    }
+
+    async registerSWFeatures() {
+        if ('serviceWorker' in navigator) {
+            try {
+                const reg = await navigator.serviceWorker.ready;
+
+                // Request Notification Permission
+                if ('Notification' in window && Notification.permission === 'default') {
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        console.log('Notifications granted');
+                    }
+                }
+
+                // Register Background Sync
+                if ('sync' in reg) {
+                    await reg.sync.register('sync-location');
+                    console.log('Background Sync registered');
+                }
+
+                // Register Periodic Sync (if supported)
+                if ('periodicSync' in reg) {
+                    const status = await navigator.permissions.query({
+                        name: 'periodic-background-sync',
+                    });
+                    if (status.state === 'granted') {
+                        await reg.periodicSync.register('update-schedule', {
+                            minInterval: 24 * 60 * 60 * 1000, // 1 day
+                        });
+                        console.log('Periodic Sync registered');
+                    }
+                }
+            } catch (e) {
+                console.log('SW Features Error:', e);
+            }
+        }
     }
 
     connectMQTT() {
