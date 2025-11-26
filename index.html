@@ -244,20 +244,223 @@
 
     </main>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <!-- App Logic -->
-    <script src="app.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW registered'))
-                    .catch(err => console.log('SW failed', err));
-            });
-        }
-    </script>
-</body>
+    ```
+    @keyframes fadeIn {
+    from {
+    opacity: 0;
+    transform: translateY(10px);
+    }
+
+    to {
+    opacity: 1;
+    transform: translateY(0);
+    }
+    }
+    </style>
+    </head>
+
+    <body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
+
+        <!-- Header -->
+        <header class="bg-indigo-600 text-white p-4 shadow-lg z-10">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-bold tracking-tight">UniTransport</h1>
+                <button id="reset-btn"
+                    class="text-xs bg-indigo-500 hover:bg-indigo-400 px-3 py-1 rounded transition">Reset
+                    App</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="app" class="flex-grow container mx-auto p-4 max-w-md relative">
+
+            <!-- View: Role Selection -->
+            <div id="view-role-selection" class="view animate-fade-in space-y-6 mt-10">
+                <div class="text-center space-y-2">
+                    <h2 class="text-3xl font-bold text-gray-800">Welcome</h2>
+                    <p class="text-gray-500">Select your role to continue</p>
+                </div>
+
+                <div class="grid gap-4">
+                    <button onclick="app.setRole('student')"
+                        class="group relative p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-indigo-500 text-left">
+                        <div class="flex items-center space-x-4">
+                            <div
+                                class="bg-indigo-100 p-3 rounded-full text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Student</h3>
+                                <p class="text-sm text-gray-500">Find a bus and track arrival</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <button onclick="app.setRole('driver')"
+                        class="group relative p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-emerald-500 text-left">
+                        <div class="flex items-center space-x-4">
+                            <div
+                                class="bg-emerald-100 p-3 rounded-full text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Driver</h3>
+                                <p class="text-sm text-gray-500">Share your location and route</p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- View: Driver Dashboard -->
+            <div id="view-driver-dashboard" class="view hidden animate-fade-in space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Trip Configuration</h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Direction</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="app.setDirection('town_to_uni')" id="btn-dir-tu"
+                                    class="dir-btn p-3 rounded-xl border text-sm font-medium transition-all hover:bg-gray-50">Town
+                                    → Uni</button>
+                                <button onclick="app.setDirection('uni_to_town')" id="btn-dir-ut"
+                                    class="dir-btn p-3 rounded-xl border text-sm font-medium transition-all hover:bg-gray-50">Uni
+                                    → Town</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Route Number</label>
+                            <div class="flex space-x-2 overflow-x-auto pb-2">
+                                <button onclick="app.setRoute(1)"
+                                    class="route-btn w-12 h-12 rounded-full border flex items-center justify-center font-bold text-lg hover:bg-indigo-50 transition-colors"
+                                    data-route="1">1</button>
+                                <button onclick="app.setRoute(2)"
+                                    class="route-btn w-12 h-12 rounded-full border flex items-center justify-center font-bold text-lg hover:bg-indigo-50 transition-colors"
+                                    data-route="2">2</button>
+                                <button onclick="app.setRoute(3)"
+                                    class="route-btn w-12 h-12 rounded-full border flex items-center justify-center font-bold text-lg hover:bg-indigo-50 transition-colors"
+                                    data-route="3">3</button>
+                                <button onclick="app.setRoute(4)"
+                                    class="route-btn w-12 h-12 rounded-full border flex items-center justify-center font-bold text-lg hover:bg-indigo-50 transition-colors"
+                                    data-route="4">4</button>
+                            </div>
+                        </div>
+
+                        <button onclick="app.startDriving()" id="btn-start-driving"
+                            class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-lg shadow-emerald-200 transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                            Start Journey
+                        </button>
+                    </div>
+                </div>
+
+                <div id="driver-active-panel"
+                    class="hidden bg-emerald-50 p-6 rounded-2xl border border-emerald-100 text-center space-y-3">
+                    <div
+                        class="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full animate-pulse">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-emerald-800">Broadcasting Location</h3>
+                    <p class="text-emerald-600 text-sm">Students can now see your bus on the map.</p>
+                    <button onclick="app.stopDriving()"
+                        class="text-sm text-red-500 font-medium hover:text-red-700 underline">Stop Journey</button>
+                </div>
+            </div>
+
+            <!-- View: Student Dashboard -->
+            <div id="view-student-dashboard" class="view hidden animate-fade-in space-y-4">
+                <!-- Filter Section -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+                    <div class="flex space-x-2">
+                        <button onclick="app.setStudentFilter('town_to_uni')" id="st-filter-tu"
+                            class="flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg border transition-colors">Town
+                            → Uni</button>
+                        <button onclick="app.setStudentFilter('uni_to_town')" id="st-filter-ut"
+                            class="flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg border transition-colors">Uni
+                            → Town</button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-medium text-gray-500 uppercase">Route:</span>
+                        <select id="student-route-select" onchange="app.setStudentRoute(this.value)"
+                            class="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2">
+                            <option value="">All Routes</option>
+                            <option value="1">Route 1</option>
+                            <option value="2">Route 2</option>
+                            <option value="3">Route 3</option>
+                            <option value="4">Route 4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Map Container -->
+                <div class="relative bg-white p-1 rounded-2xl shadow-md">
+                    <div id="map"></div>
+                    <!-- Overlay for status -->
+                    <div id="map-overlay"
+                        class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur p-3 rounded-xl shadow-lg border border-gray-100 hidden">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase font-bold">Nearest Bus</p>
+                                <p class="text-lg font-bold text-indigo-600" id="eta-display">5 mins away</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-gray-500" id="bus-info-display">Route 1</p>
+                                <p class="text-xs font-medium" id="distance-display">1.2 km</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Buses List -->
+                <div class="space-y-2">
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider ml-1">Active Buses</h3>
+                    <div id="buses-list" class="space-y-2">
+                        <!-- Bus items will be injected here -->
+                        <div class="p-4 bg-white rounded-xl border border-gray-100 text-center text-gray-400 text-sm">
+                            No buses currently active on this route.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <!-- App Logic -->
+        <script src="app.js"></script>
+        <script>
+            // Global Error Handler
+            window.onerror = function (msg, url, line, col, error) {
+                alert("App Error: " + msg + "\n\nPlease reload the page.");
+                return false;
+            };
+
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(reg => console.log('SW registered'))
+                        .catch(err => console.log('SW failed', err));
+                });
+            }
+        </script>
+    </body>
 
 </html>
+```

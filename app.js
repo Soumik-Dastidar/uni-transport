@@ -1,8 +1,7 @@
-
 // State Management
 const STATE_KEY = 'uni_transport_data';
 const MQTT_BROKER = 'broker.hivemq.com';
-const MQTT_PORT = 8000;
+const MQTT_PORT = 8884; // Secure WebSocket Port (Required for HTTPS)
 const MQTT_TOPIC = 'unitransport/sreemangal/updates';
 
 // Sreemangal Coordinates
@@ -103,7 +102,7 @@ class App {
                 console.log("MQTT Connected");
                 this.mqttClient.subscribe(MQTT_TOPIC);
             },
-            useSSL: false
+            useSSL: true // Required for HTTPS
         });
     }
 
