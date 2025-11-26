@@ -41,5 +41,31 @@
       "form_factor": "narrow",
       "label": "Mobile View"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Student View",
+      "short_name": "Student",
+      "description": "Open the student dashboard",
+      "url": "./index.html?role=student",
+      "icons": [
+        {
+          "src": "https://cdn-icons-png.flaticon.com/512/3448/3448339.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Driver View",
+      "short_name": "Driver",
+      "description": "Open the driver dashboard",
+      "url": "./index.html?role=driver",
+      "icons": [
+        {
+          "src": "https://cdn-icons-png.flaticon.com/512/3448/3448339.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }
